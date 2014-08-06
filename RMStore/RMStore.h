@@ -261,6 +261,8 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 - (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
 
+- (void)storePaymentQueueUpdatedTransactions:(NSNotification*)notification;
+
 @end
 
 /**
@@ -299,5 +301,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 /** Used in @c storeDownload*:, @c storePaymentTransactionFinished: and in @c storePaymentTransactionFailed:.
  */
 @property (nonatomic, readonly) SKPaymentTransaction *transaction;
+
+@property (nonatomic, readonly) NSArray *transactions;
 
 @end
