@@ -1,5 +1,5 @@
 #RMStore
-[![Version](https://cocoapod-badges.herokuapp.com/v/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore) [![Platform](https://cocoapod-badges.herokuapp.com/p/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore) [![Build Status](https://travis-ci.org/robotmedia/RMStore.png)](https://travis-ci.org/robotmedia/RMStore)
+[![Version](https://cocoapod-badges.herokuapp.com/v/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore) [![Platform](https://cocoapod-badges.herokuapp.com/p/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore)
 
 
 A lightweight iOS library for In-App Purchases.
@@ -19,12 +19,12 @@ RMStore adds [blocks](#storekit-with-blocks) and [notifications](#notifications)
 Using [CocoaPods](http://cocoapods.org/):
 
 ```ruby
-pod 'RMStore', '~> 0.5'
+pod 'RMStore', '~> 0.6'
 ```
 
 Or add the files from the [RMStore](https://github.com/robotmedia/RMStore/tree/master/RMStore) directory if you're doing it manually.
 
-Check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Installation) for more options. 
+Check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Installation) for more options.
 
 ##StoreKit with blocks
 
@@ -88,13 +88,13 @@ RMStore sends notifications of StoreKit related events and extends `NSNotificati
 ```objective-c
 - (void)storeProductsRequestFailed:(NSNotification*)notification
 {
-    NSError *error = notification.storeError;
+    NSError *error = notification.rm_storeError;
 }
 
-- (void)storeProductsRequestFinished:(NSNotification*)notification 
+- (void)storeProductsRequestFinished:(NSNotification*)notification
 {
-    NSArray *products = notification.products;
-    NSArray *invalidProductIdentifiers = notification.invalidProductIdentififers;
+    NSArray *products = notification.rm_products;
+    NSArray *invalidProductIdentifiers = notification.rm_invalidProductIdentififers;
 }
 ```
 
@@ -103,17 +103,25 @@ RMStore sends notifications of StoreKit related events and extends `NSNotificati
 Payment transaction notifications are sent after a payment has been requested or for each restored transaction.
 
 ```objective-c
-- (void)storePaymentTransactionFailed:(NSNotification*)notification
-{
-    NSError *error = notification.storeError;
-    NSString *productIdentifier = notification.productIdentifier;
-    SKPaymentTransaction *transaction = notification.transaction;
-}
-
 - (void)storePaymentTransactionFinished:(NSNotification*)notification
 {
-    NSString *productIdentifier = notification.productIdentifier;
-    SKPaymentTransaction *transaction = notification.transaction;
+    NSString *productIdentifier = notification.rm_productIdentifier;
+    SKPaymentTransaction *transaction = notification.rm_transaction;
+}
+
+- (void)storePaymentTransactionFailed:(NSNotification*)notification
+{
+    NSError *error = notification.rm_storeError;
+    NSString *productIdentifier = notification.rm_productIdentifier;
+    SKPaymentTransaction *transaction = notification.rm_transaction;
+}
+
+// iOS 8+ only
+
+- (void)storePaymentTransactionDeferred:(NSNotification*)notification
+{
+    NSString *productIdentifier = notification.rm_productIdentifier;
+    SKPaymentTransaction *transaction = notification.rm_transaction;
 }
 ```
 
@@ -122,7 +130,7 @@ Payment transaction notifications are sent after a payment has been requested or
 ```objective-c
 - (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
 {
-    NSError *error = notification.storeError;
+    NSError *error = notification.rm_storeError;
 }
 
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification { }
@@ -135,25 +143,25 @@ For Apple-hosted and self-hosted downloads:
 ```objective-c
 - (void)storeDownloadFailed:(NSNotification*)notification
 {
-    SKDownload *download = notification.storeDownload; // Apple-hosted only
-    NSString *productIdentifier = notification.productIdentifier;
-    SKPaymentTransaction *transaction = notification.transaction;
-    NSError *error = notification.storeError;
+    SKDownload *download = notification.rm_storeDownload; // Apple-hosted only
+    NSString *productIdentifier = notification.rm_productIdentifier;
+    SKPaymentTransaction *transaction = notification.rm_transaction;
+    NSError *error = notification.rm_storeError;
 }
 
 - (void)storeDownloadFinished:(NSNotification*)notification;
 {
-    SKDownload *download = notification.storeDownload; // Apple-hosted only
-    NSString *productIdentifier = notification.productIdentifier;
-    SKPaymentTransaction *transaction = notification.transaction;
+    SKDownload *download = notification.rm_storeDownload; // Apple-hosted only
+    NSString *productIdentifier = notification.rm_productIdentifier;
+    SKPaymentTransaction *transaction = notification.rm_transaction;
 }
 
 - (void)storeDownloadUpdated:(NSNotification*)notification
 {
-    SKDownload *download = notification.storeDownload; // Apple-hosted only
-    NSString *productIdentifier = notification.productIdentifier;
-    SKPaymentTransaction *transaction = notification.transaction;
-    float progress = notification.download.progress;
+    SKDownload *download = notification.rm_storeDownload; // Apple-hosted only
+    NSString *productIdentifier = notification.rm_productIdentifier;
+    SKPaymentTransaction *transaction = notification.rm_transaction;
+    float progress = notification.rm_downloadProgress;
 }
 ```
 
@@ -162,16 +170,16 @@ Only for Apple-hosted downloads:
 ```objective-c
 - (void)storeDownloadCanceled:(NSNotification*)notification
 {
-	SKDownload *download = notification.storeDownload;
-    NSString *productIdentifier = notification.productIdentifier;
-    SKPaymentTransaction *transaction = notification.transaction;
+	SKDownload *download = notification.rm_storeDownload;
+    NSString *productIdentifier = notification.rm_productIdentifier;
+    SKPaymentTransaction *transaction = notification.rm_transaction;
 }
 
 - (void)storeDownloadPaused:(NSNotification*)notification
 {
-	SKDownload *download = notification.storeDownload;
-    NSString *productIdentifier = notification.productIdentifier;
-    SKPaymentTransaction *transaction = notification.transaction;
+	SKDownload *download = notification.rm_storeDownload;
+    NSString *productIdentifier = notification.rm_productIdentifier;
+    SKPaymentTransaction *transaction = notification.rm_transaction;
 }
 ```
 
@@ -180,7 +188,7 @@ Only for Apple-hosted downloads:
 ```objective-c
 - (void)storeRefreshReceiptFailed:(NSNotification*)notification;
 {
-    NSError *error = notification.storeError;
+    NSError *error = notification.rm_storeError;
 }
 
 - (void)storeRefreshReceiptFinished:(NSNotification*)notification { }
@@ -190,7 +198,7 @@ Only for Apple-hosted downloads:
 
 RMStore doesn't perform receipt verification by default but provides reference implementations. You can implement your own custom verification or use the reference verificators provided by the library.
 
-Both options are outlined below. For more info, check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Receipt-verification). 
+Both options are outlined below. For more info, check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Receipt-verification).
 
 ###Reference verificators
 
@@ -235,7 +243,7 @@ RMStore will notify that a transaction finished or failed only after all of its 
 
 ###Self-hosted content
 
-RMStore delegates the downloading of self-hosted content via optional the `contentDownloader` delegate. You can provide your own implementation using the `RMStoreContentDownloader` protocol:
+RMStore delegates the downloading of self-hosted content via the optional `contentDownloader` delegate. You can provide your own implementation using the `RMStoreContentDownloader` protocol:
 
 ```objective-c
 - (void)downloadContentForTransaction:(SKPaymentTransaction*)transaction
@@ -255,7 +263,7 @@ For more info, check out the [wiki](https://github.com/robotmedia/RMStore/wiki/T
 
 ##Requirements
 
-RMStore requires iOS 5.0 or above and ARC. Some features are only available for iOS 6.0 and iOS 7.0.
+RMStore requires iOS 5.0 or above and ARC.
 
 ##Roadmap
 
@@ -266,13 +274,13 @@ RMStore is in initial development and its public API should not be considered st
 ##License
 
  Copyright 2013-2014 [Robot Media SL](http://www.robotmedia.net)
- 
+
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
